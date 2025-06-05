@@ -21,17 +21,20 @@ async function run() {
   try {
     // await client.connect();
        const userCollection = client.db("bookCase").collection("user");
+       const bookCollection = client.db("bookCase").collection("books");
+       const reviewCollection = client.db("bookCase").collection("reviews");
 
-  
+      //  Create user API 
+
        app.post('/user',async(req,res)=>{
           const userData = req.body
           const {email} = userData
-          console.log(email)
+      
           const existingUser = await userCollection.findOne({email:email})
-          console.log(existingUser)
+       
           if(!existingUser){
             const result = await userCollection.insertOne(userData)
-            console.log(result)
+    
             res.json({
               success:true,
               insertedId:result.insertedId,
@@ -46,6 +49,23 @@ async function run() {
           }
           
        })
+
+      //  Add new book API
+      app.post('/book', async (req, res) => {
+        const data = req.body
+        const result = await bookCollection.insertOne(data)
+        console.log(result)
+        res.send(result);
+      })
+
+      // Get Book depending on user email API
+
+      app.get('/book', async (req, res) => {
+        console.log(req.query)
+          const email = req.query.email
+          const result = await bookCollection.find({user_email: email}).toArray();
+          res.send(result)
+      })
 
 
     await client.db("admin").command({ ping: 1 });
