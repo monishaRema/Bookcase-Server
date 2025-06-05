@@ -1,6 +1,6 @@
 const express = require('express')
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000
 const cors = require('cors')
 const app = express()
@@ -25,11 +25,9 @@ async function run() {
        const reviewCollection = client.db("bookCase").collection("reviews");
 
       //  Create user API 
-
        app.post('/user',async(req,res)=>{
           const userData = req.body
           const {email} = userData
-      
           const existingUser = await userCollection.findOne({email:email})
        
           if(!existingUser){
@@ -54,18 +52,44 @@ async function run() {
       app.post('/book', async (req, res) => {
         const data = req.body
         const result = await bookCollection.insertOne(data)
-        console.log(result)
         res.send(result);
       })
 
       // Get Book depending on user email API
-
       app.get('/book', async (req, res) => {
         console.log(req.query)
           const email = req.query.email
           const result = await bookCollection.find({user_email: email}).toArray();
           res.send(result)
       })
+
+      //  Get signle book depending on Book Id
+       app.get('/book/:id', async (req, res) => {
+          const id = req.params.id;
+          const query = { _id: new ObjectId(id) };
+          const result = await bookCollection.findOne(query);
+          res.send(result)
+      })
+
+      // delete book API 
+
+      app.delete('/book/:id',async (req,res) => {
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)}
+        const result = await bookCollection.deleteOne(query)
+        res.send(result)
+       
+      })
+
+      // get all books API
+
+      app.get('/all-books',async (req,res) => {
+        const result = await bookCollection.find().toArray();
+        res.send(result)
+        console.log(result)
+      })
+
+
 
 
     await client.db("admin").command({ ping: 1 });
