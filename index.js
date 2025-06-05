@@ -72,17 +72,23 @@ async function run() {
       })
 
       // delete book API 
-
       app.delete('/book/:id',async (req,res) => {
         const id = req.params.id;
         const query = {_id: new ObjectId(id)}
         const result = await bookCollection.deleteOne(query)
         res.send(result)
-       
+      })
+
+      // upvote API
+      app.patch('/upvote/:id',async (req,res) => {
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)}
+        const query =  { $inc: { upvotes: 1 } };
+        const result = await bookCollection.updateOne(filter,query)
+        res.send(result)
       })
 
       // get all books API
-
       app.get('/all-books',async (req,res) => {
         const result = await bookCollection.find().toArray();
         res.send(result)
