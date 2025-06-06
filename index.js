@@ -117,6 +117,14 @@ async function run() {
           res.send(result)
       })
 
+      // Post a Review API
+      app.post('/review', async (req, res) => {
+        const data = req.body
+        const result = await reviewCollection.insertOne(data)
+        console.log(result)
+        res.send(result);
+      })
+
 
 
     await client.db("admin").command({ ping: 1 });
