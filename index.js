@@ -111,6 +111,12 @@ async function run() {
         
       })
 
+      // Get Popular Book API 
+      app.get('/popular-books/', async (req, res) => {
+          const result = await bookCollection.find().sort({upvotes: -1}).limit(12).toArray();
+          res.send(result)
+      })
+
 
 
     await client.db("admin").command({ ping: 1 });
