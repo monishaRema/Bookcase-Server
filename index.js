@@ -89,13 +89,11 @@ async function run() {
     app.get("/all-books", async (req, res) => {
       const result = await bookCollection.find().toArray();
       res.send(result);
-      console.log(result);
     });
 
     // update books API
     app.put("/book/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(id);
       const filter = { _id: new ObjectId(id) };
       const updatedBook = req.body;
       const updatedBookData = {
@@ -103,7 +101,6 @@ async function run() {
       };
       const result = await bookCollection.updateOne(filter, updatedBookData);
       res.send(result);
-      console.log(result);
     });
 
     // Get Popular Book API
@@ -127,19 +124,18 @@ async function run() {
       });
 
       if (existingReview) {
-        return res.json({
-          status: "400",
-          message: "You have already reviewed this book.",
-        });
+        return res.json({ 
+            status: '400',
+            message: "You have already reviewed this book." });
       }
       const result = await reviewCollection.insertOne(data);
-      console.log(result);
       res.send(result);
     });
     // Get Review API
 
-    app.get("/review", async (req, res) => {
-      const result = await reviewCollection.find().toArray();
+    app.get("/review/:id", async (req, res) => {
+      const id = req.params.id
+      const result = await reviewCollection.find({book_id: id}).toArray();
       res.send(result);
     });
 
