@@ -132,12 +132,24 @@ async function run() {
       res.send(result);
     });
     // Get Review API
-
     app.get("/review/:id", async (req, res) => {
       const id = req.params.id
       const result = await reviewCollection.find({book_id: id}).toArray();
       res.send(result);
     });
+
+    // delete review API
+    app.delete("/review/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await reviewCollection.deleteOne(query);
+      res.send(result);
+    });
+
+
+
+
+
 
     await client.db("admin").command({ ping: 1 });
     console.log(
