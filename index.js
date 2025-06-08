@@ -108,11 +108,20 @@ async function run() {
       const result = await bookCollection
         .find()
         .sort({ upvotes: -1 })
-        .limit(12)
+        .limit(8)
         .toArray();
       res.send(result);
     });
 
+    // Get recent Book API
+    app.get("/recent-books/", async (req, res) => {
+      const result = await bookCollection
+        .find()
+        .sort({ _id: -1 })
+        .limit(8)
+        .toArray();
+      res.send(result);
+    });
     // Post a Review API
     app.post("/review", async (req, res) => {
       const data = req.body;
@@ -146,10 +155,14 @@ async function run() {
       res.send(result);
     });
 
-
-
-
-
+    // update review API
+    app.patch("/review/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const query = {$set:{review_text:req.body.review}}
+      const result = await reviewCollection.updateOne(filter,query );
+      res.send(result);
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
