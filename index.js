@@ -133,17 +133,18 @@ async function run() {
       });
 
       if (existingReview) {
-        return res.json({ 
-            status: '400',
-            message: "You have already reviewed this book." });
+        return res.json({
+          status: "400",
+          message: "You have already reviewed this book.",
+        });
       }
       const result = await reviewCollection.insertOne(data);
       res.send(result);
     });
     // Get Review API
     app.get("/review/:id", async (req, res) => {
-      const id = req.params.id
-      const result = await reviewCollection.find({book_id: id}).toArray();
+      const id = req.params.id;
+      const result = await reviewCollection.find({ book_id: id }).toArray();
       res.send(result);
     });
 
@@ -159,8 +160,31 @@ async function run() {
     app.patch("/review/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
-      const query = {$set:{review_text:req.body.review}}
-      const result = await reviewCollection.updateOne(filter,query );
+      const query = { $set: { review_text: req.body.review } };
+      const result = await reviewCollection.updateOne(filter, query);
+      res.send(result);
+    });
+
+    // Aggregate Category from all books api
+    app.get("/book-category/", async (req, res) => {
+      const result = await bookCollection.aggregate([
+        {
+          $group:{
+            _id:"$book_category",
+            count:{$sum:1}
+          }
+        },
+        {
+          $project:{
+            _id:0,
+            book_category:"$_id",
+            count:1
+          }
+        }
+
+
+      ]).toArray()
+
       res.send(result);
     });
 
