@@ -91,6 +91,16 @@ async function run() {
       res.send(result);
     });
 
+    // get all books API Depending on User
+    app.get("/user/books", async (req, res) => {
+      const email = req.query.email;
+      console.log(email)
+      const result = await bookCollection.find({user_email: email}).toArray();
+      res.send(result);
+    });
+
+    
+
     // update books API
     app.put("/book/:id", async (req, res) => {
       const id = req.params.id;
@@ -185,6 +195,34 @@ async function run() {
 
       ]).toArray()
 
+      res.send(result);
+    });
+
+
+     // Aggregate Category from all books api depending of user
+    app.get("/user/category/", async (req, res) => {
+      const email = req.query.email;
+      const result = await bookCollection.aggregate([
+        {
+          $match: {user_email: email}
+        },
+        {
+          $group:{
+            _id:"$book_category",
+            count:{$sum:1}
+          }
+        },
+        {
+          $project:{
+            _id:0,
+            book_category:"$_id",
+            count:1
+          }
+        }
+
+
+      ]).toArray()
+      console.log(result)
       res.send(result);
     });
 
