@@ -50,13 +50,32 @@ The server-side engine of Book Case handles all the heavy lifting — from user 
 - JWT issued post-login for secured API access  
 - Middleware to verify Firebase token & user role (admin/user)
 
-### 🧾 RESTful API Routes
-- `/books` – Manage book records  
-- `/reviews` – Post/edit user reviews  
-- `/upvotes` – Upvote/track popular books  
-- `/dashboard` – Aggregated reading stats  
-- `/users` – User account and role management  
-- `/auth` – Token handling and session validation
+## 🧾 RESTful API Routes
+
+### 👤 User APIs
+- `POST /user` – Create new user if not already exists
+
+### 📚 Book APIs
+- `POST /book` – Add a new book
+- `GET /book?email=user@example.com` – Get books added by a user
+- `GET /book/:id` – Get a single book by ID
+- `DELETE /book/:id` – Delete a book by ID
+- `PUT /book/:id` – Update book details
+- `PATCH /upvote/:id` – Increment upvote count of a book
+- `GET /all-books` – Get all books
+- `GET /user/books?email=user@example.com` – Get user-specific books
+- `GET /popular-books` – Get top 8 books sorted by upvotes
+- `GET /recent-books` – Get latest 8 books added
+
+### 📝 Review APIs
+- `POST /review` – Submit a review (only one per user/book allowed)
+- `GET /review/:id` – Get all reviews for a book
+- `DELETE /review/:id` – Delete a review
+- `PATCH /review/:id` – Update an existing review
+
+### 📊 Category Aggregation
+- `GET /book-category` – Get category count from all books
+- `GET /user/category?email=user@example.com` – Get category count for a user's books
 
 ---
 
@@ -79,6 +98,14 @@ The server-side engine of Book Case handles all the heavy lifting — from user 
 - **MongoDB Atlas** – Cloud database
 
 ---
+
+
+## 📁 Project Structure
+<pre>
+book-case-server/
+├── index.js # Main server entry
+├── .env # Environment variables
+</pre>
 
 ## 🧪 Setup & Installation
 
